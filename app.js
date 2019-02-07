@@ -63,7 +63,7 @@ const colors = ['red', 'orange', 'yellow', 'green', 'blue', 'purple']
 const ctx = canvas.getContext('2d');
 const ballRadius = 10;
 const paddleHeight = 10;
-const paddleWidth = 100;
+const paddleWidth = 480;
 
 const ball = new Ball(canvas.width / 2, canvas.height - 30, ballRadius);
 const paddle = new Paddle(paddleHeight, paddleWidth);
@@ -139,9 +139,16 @@ function collisionDetection() {
             requestAnimationFrame(draw); // Needed for Chrome to end game
           }
 
+          // This block determines how the ball bounces when it hits a brick
           if (ball.x < b.x || ball.x > b.x + brickWidth) {
+            if ((ball.dx > 0 && ball.x > b.x + brickWidth) || (ball.dx < 0 && ball.x < b.x)) {
+              ball.dx = -ball.dx;
+            }
             ball.dx = -ball.dx;
-          } else {
+          } if (ball.y < b.y || ball.y > b.y + brickHeight) {
+            if ((ball.dy > 0 && ball.y > b.y + brickHeight) || (ball.dy < 0 && ball.y < b.y)) {
+              ball.dy = -ball.dy;
+            }
             ball.dy = -ball.dy;
           }
         }
@@ -219,7 +226,7 @@ function draw() {
   }
 
   ball.move();
-  paddle.move()
+  paddle.move();
 
   requestAnimationFrame(draw);
 }
