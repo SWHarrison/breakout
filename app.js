@@ -2,7 +2,7 @@
 const canvas = document.getElementById('myCanvas');
 
 class Ball {
-  constructor(x, y, radius = 10) {
+  /*constructor(x, y, radius = 10) {
     this.x = x;
     this.y = y;
     this.dx = 2;
@@ -13,6 +13,19 @@ class Ball {
   move() {
     this.x += this.dx;
     this.y += this.dy;
+  }*/
+  constructor(x, y, radius = 10) {
+    this.angle = Math.random() * Math.PI + Math.PI; // Ensures angle is going upwards
+    //this.angle = Math.PI * 1.48;
+    this.speed = 5;
+    this.x = x;
+    this.y = y;
+    this.radius = radius;
+  }
+
+  move() {
+    this.x += Math.cos(this.angle) * this.speed;
+    this.y += Math.sin(this.angle) * this.speed;
   }
 
   render(ctx) {
@@ -125,7 +138,7 @@ function mouseMoveHandler(e) {
   }
 }
 
-function collisionDetection() {
+/*function collisionDetection() {
   for (let c = 0; c < brickColumnCount; c += 1) {
     for (let r = 0; r < brickRowCount; r += 1) {
       const b = bricks[c][r];
@@ -155,7 +168,7 @@ function collisionDetection() {
       }
     }
   }
-}
+}*/
 
 function drawScore() {
   ctx.font = '16px Arial';
@@ -194,21 +207,87 @@ function drawBricks() {
 
 function draw() {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
-  drawBricks();
+  // drawBricks();
   drawBall();
   drawPaddle();
   drawScore();
   drawLives();
-  collisionDetection();
+  // collisionDetection();
 
-  if (ball.x + ball.dx > canvas.width - ballRadius || ball.x + ball.dx < ballRadius) {
-    ball.dx = -ball.dx;
+  // if ball.x < 0 + ball.radius past the left egde
+  if (ball.angle > Math.PI * 0.5 && ball.angle < Math.PI * 1.5) {
+    if (ball.x < ballRadius) {
+      if (ball.angle > Math.PI) {
+        ball.angle = Math.PI * 3 - ball.angle;
+      } else {
+        ball.angle = Math.PI - ball.angle;
+      }
+    }
+  } else {
+    if (ball.x > canvas.width - ballRadius) {
+      if (ball.angle > Math.PI) {
+        ball.angle = Math.PI * 3 - ball.angle;
+      } else {
+        ball.angle = Math.PI - ball.angle;
+      }
+    }
   }
-  if (ball.y + ball.dy < ballRadius) {
-    ball.dy = -ball.dy;
-  } else if (ball.y + ball.dy > canvas.height - ballRadius) {
+
+  if (ball.angle > Math.PI * 1) {
+    if (ball.y < ballRadius) {
+      ball.angle = Math.PI * 2 - ball.angle;
+    }
+  } else {
+    if (ball.y > canvas.height - ballRadius) {
+      if (ball.x > paddle.x && ball.x < paddle.x + paddleWidth) {
+        ball.angle = Math.PI * 2 - ball.angle;
+      } else {
+        lives -= 1;
+        if (!lives) {
+          alert('GAME OVER');
+          document.location.reload();
+          requestAnimationFrame(draw); // Needed for Chrome to end game
+        } else {
+          ball.x = canvas.width / 2;
+          ball.y = canvas.height - 30;
+          ball.angle = Math.random() * Math.PI + Math.PI;
+          paddle.x = (canvas.width - paddleWidth) / 2;
+        }
+      }
+    }
+  }
+
+
+  /* if (ball.x + Math.cos(ball.angle) * ball.speed > canvas.width - ballRadius) {
+    console.log(ball.x + " " + ball.y)
+    if (ball.angle > Math.PI) {
+      ball.angle -= (Math.PI * 0.5);
+    } else {
+      ball.angle += (Math.PI * 0.5);
+    }
+  } else if (ball.x + Math.cos(ball.angle) * ball.speed < ballRadius) {
+    console.log(ball.x + " " + ball.y)
+    if (ball.angle > Math.PI) {
+      ball.angle += (Math.PI * 0.5);
+    } else {
+      ball.angle -= (Math.PI * 0.5);
+    }
+  }
+  if (ball.y + Math.sin(ball.angle) * ball.speed < ballRadius) {
+    console.log(ball.x + " " + ball.y)
+    if (ball.angle > Math.PI) {
+      ball.angle -= (Math.PI * 1.5);
+    } else {
+      ball.angle -= (Math.PI * 0.5);
+    }
+  } else if (ball.y + Math.sin(ball.angle) * ball.speed > canvas.height - ballRadius) {
+    console.log(ball.x + " " + ball.y)
     if (ball.x > paddle.x && ball.x < paddle.x + paddleWidth) {
-      ball.dy = -ball.dy;
+      if (ball.angle > Math.PI * 0.5) {
+        ball.angle += (Math.PI * 0.5);
+      } else {
+        ball.angle += (Math.PI * 1.5);
+      }
     } else {
       lives -= 1;
       if (!lives) {
@@ -216,19 +295,37 @@ function draw() {
         document.location.reload();
         requestAnimationFrame(draw); // Needed for Chrome to end game
       } else {
-        x = canvas.width / 2;
-        y = canvas.height - 30;
-        ball.dx = 2;
-        ball.dy = -2;
+        ball.x = canvas.width / 2;
+        ball.y = canvas.height - 30;
+        ball.angle = Math.random() * Math.PI + Math.PI;
         paddle.x = (canvas.width - paddleWidth) / 2;
       }
     }
-  }
+  } */
 
   ball.move();
   paddle.move();
+
 
   requestAnimationFrame(draw);
 }
 
 draw()
+
+/*class Sprite {
+  constructor() {
+    this.angle = Math.random() * Math.PI * 2
+    this.speed = 10
+    this.x = 0
+    this.y = 0
+  }
+
+  move() {
+    this.x += Math.cos(this.angle) * this.speed
+    this.y += Math.sin(this.angle) * this.speed
+  }
+
+  render() {
+
+  }
+}*/
