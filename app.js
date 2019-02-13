@@ -1,3 +1,5 @@
+/* eslint no-lonely-if: 0 */
+
 // game of breakout using JS
 const canvas = document.getElementById('myCanvas');
 
@@ -76,7 +78,7 @@ const colors = ['red', 'orange', 'yellow', 'green', 'blue', 'purple']
 const ctx = canvas.getContext('2d');
 const ballRadius = 10;
 const paddleHeight = 10;
-const paddleWidth = 480;
+const paddleWidth = 120;
 
 const ball = new Ball(canvas.width / 2, canvas.height - 30, ballRadius);
 const paddle = new Paddle(paddleHeight, paddleWidth);
@@ -138,7 +140,7 @@ function mouseMoveHandler(e) {
   }
 }
 
-/*function collisionDetection() {
+function collisionDetection() {
   for (let c = 0; c < brickColumnCount; c += 1) {
     for (let r = 0; r < brickRowCount; r += 1) {
       const b = bricks[c][r];
@@ -154,21 +156,23 @@ function mouseMoveHandler(e) {
 
           // This block determines how the ball bounces when it hits a brick
           if (ball.x < b.x || ball.x > b.x + brickWidth) {
-            if ((ball.dx > 0 && ball.x > b.x + brickWidth) || (ball.dx < 0 && ball.x < b.x)) {
-              ball.dx = -ball.dx;
+            if (!((Math.cos(ball.angle) > 0 && ball.x > b.x + brickWidth) || (Math.cos(ball.angle) < 0 && ball.x < b.x))) {
+              if (ball.angle > Math.PI) {
+                ball.angle = Math.PI * 3 - ball.angle;
+              } else {
+                ball.angle = Math.PI - ball.angle;
+              }
             }
-            ball.dx = -ball.dx;
           } if (ball.y < b.y || ball.y > b.y + brickHeight) {
-            if ((ball.dy > 0 && ball.y > b.y + brickHeight) || (ball.dy < 0 && ball.y < b.y)) {
-              ball.dy = -ball.dy;
+            if (!((Math.sin(ball.angle) > 0 && ball.y > b.y + brickHeight) || (Math.sin(ball.angle) < 0 && ball.y < b.y))) {
+              ball.angle = Math.PI * 2 - ball.angle;
             }
-            ball.dy = -ball.dy;
           }
         }
       }
     }
   }
-}*/
+}
 
 function drawScore() {
   ctx.font = '16px Arial';
@@ -207,12 +211,12 @@ function drawBricks() {
 
 function draw() {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
-  // drawBricks();
+  drawBricks();
   drawBall();
   drawPaddle();
   drawScore();
   drawLives();
-  // collisionDetection();
+  collisionDetection();
 
   // if ball.x < 0 + ball.radius past the left egde
   if (ball.angle > Math.PI * 0.5 && ball.angle < Math.PI * 1.5) {
@@ -240,7 +244,8 @@ function draw() {
   } else {
     if (ball.y > canvas.height - ballRadius) {
       if (ball.x > paddle.x && ball.x < paddle.x + paddleWidth) {
-        ball.angle = Math.PI * 2 - ball.angle;
+        // ball.angle = Math.PI * 2 - ball.angle; // Bounces
+        ball.angle = (Math.PI + Math.PI * ((ball.x - paddle.x) / (paddleWidth)));
       } else {
         lives -= 1;
         if (!lives) {
