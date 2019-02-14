@@ -17,7 +17,7 @@ class Ball {
     this.y += this.dy;
   }*/
   constructor(x, y, radius = 10) {
-    this.angle = Math.random() * Math.PI + Math.PI; // Ensures angle is going upwards
+    this.angle = Math.random() * (Math.PI * 0.5) + Math.PI * 1.25; // Ensures angle is going upwards
     //this.angle = Math.PI * 1.48;
     this.speed = 5;
     this.x = x;
@@ -40,14 +40,14 @@ class Ball {
 }
 
 class Paddle {
-  constructor(height, width) {
+  constructor(height, width, ctx) {
     this.height = height;
     this.width = width;
-    this.x = (canvas.width - this.width) / 2;
+    this.x = (ctx.canvas.width - this.width) / 2;
   }
 
-  move() {
-    if (rightPressed && this.x < canvas.width - this.width) {
+  move(ctx) {
+    if (rightPressed && this.x < ctx.canvas.width - this.width) {
       this.x += 7;
     } else if (leftPressed && this.x > 0) {
       this.x -= 7;
@@ -78,10 +78,10 @@ const colors = ['red', 'orange', 'yellow', 'green', 'blue', 'purple']
 const ctx = canvas.getContext('2d');
 const ballRadius = 10;
 const paddleHeight = 10;
-const paddleWidth = 120;
+const paddleWidth = 240;
 
 const ball = new Ball(canvas.width / 2, canvas.height - 30, ballRadius);
-const paddle = new Paddle(paddleHeight, paddleWidth);
+const paddle = new Paddle(paddleHeight, paddleWidth, ctx);
 
 // let x = canvas.width / 2;
 // let y = canvas.height - 30;
@@ -255,7 +255,7 @@ function draw() {
         } else {
           ball.x = canvas.width / 2;
           ball.y = canvas.height - 30;
-          ball.angle = Math.random() * Math.PI + Math.PI;
+          ball.angle = Math.random() * (Math.PI * 0.5) + Math.PI * 1.25;
           paddle.x = (canvas.width - paddleWidth) / 2;
         }
       }
@@ -309,7 +309,7 @@ function draw() {
   } */
 
   ball.move();
-  paddle.move();
+  paddle.move(ctx);
 
 
   requestAnimationFrame(draw);
